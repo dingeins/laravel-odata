@@ -1,0 +1,1 @@
+C:\xampp\htdocs\laravel\app/views/Products/show.blade.php
