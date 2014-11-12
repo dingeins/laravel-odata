@@ -11,7 +11,12 @@ class $NAME$ extends \BaseController {
 	{
 		$$COLLECTION$ = $MODEL$::all();
 
-		return View::make('$COLLECTION$.index', compact('$COLLECTION$'));
+		$result = array(
+		"@odata.context" => Config::get("app.url")."/\$metadata#"."Products",
+		"value" => $$COLLECTION$
+		);
+
+    	return $result;
 	}
 
 	/**
