@@ -20,16 +20,6 @@ class $NAME$ extends \BaseController {
 	}
 
 	/**
-	 * Show the form for creating a new $RESOURCE$
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		return View::make('$COLLECTION$.create');
-	}
-
-	/**
 	 * Store a newly created $RESOURCE$ in storage.
 	 *
 	 * @return Response
@@ -40,12 +30,12 @@ class $NAME$ extends \BaseController {
 
 		if ($validator->fails())
 		{
-			return Redirect::back()->withErrors($validator)->withInput();
+			return Response::make(NULL, 404);
 		}
 
 		$MODEL$::create($data);
 
-		return Redirect::route('$COLLECTION$.index');
+		return Response::make($data, 201);
 	}
 
 	/**
@@ -56,9 +46,20 @@ class $NAME$ extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$$RESOURCE$ = $MODEL$::findOrFail($id);
+		$$RESOURCE$ = $MODEL$::find($id);
+		if(empty($$RESOURCE$))
+		{
+			return Response::make(NULL, 404);
+		}
+		else
+		{
+			$result = array(
+				"@odata.context" => Config::get("app.url")."/\$metadata#"."Products"."/\$entity",
+				"value" => $$RESOURCE$
+			);
 
-		return View::make('$COLLECTION$.show', compact('$RESOURCE$'));
+    		return $result;
+		}
 	}
 
 	/**
