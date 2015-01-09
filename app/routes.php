@@ -13,10 +13,10 @@
 
 Route::resource('Products', 'ProductsController');
 
-// Route::get('/', function()
-// {
-// 	return "Service document";
-// });
+Route::get('/', function()
+{
+	return "service document";
+});
 
 // Route::get('/Products', function()
 // {

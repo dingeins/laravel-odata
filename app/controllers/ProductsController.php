@@ -1,18 +1,18 @@
 <?php
 
-class $MODEL$sController extends \BaseController {
+class ProductsController extends \BaseController {
 
 	/**
-	 * Display a listing of $COLLECTION$
+	 * Display a listing of products
 	 *
 	 * @return Response
 	 */
 	public function index()
 	{
-		$data = $MODEL$::all();
+		$data = Product::all();
 
 		$data = array(
-		'@odata.context' => Config::get('app.url').'/$metadata#'.ucfirst('$COLLECTION$'),
+		'@odata.context' => Config::get('app.url').'/$metadata#'.ucfirst('products'),
 		'value' => $data
 		);
 
@@ -23,7 +23,7 @@ class $MODEL$sController extends \BaseController {
 	}
 
 	/**
-	 * Store a newly created $RESOURCE$ in storage.
+	 * Store a newly created product in storage.
 	 *
 	 * @return Response
 	 */
@@ -31,13 +31,13 @@ class $MODEL$sController extends \BaseController {
 	{
 		$response = null;
 
-		$validator = Validator::make($data = Input::all(), $MODEL$::$rules);
+		$validator = Validator::make($data = Input::all(), Product::$rules);
 
 		if ($validator->fails()) {
 			$response = Response::json(NULL, 500);
 		}
 		else{
-			$MODEL$::create($data);
+			Product::create($data);
 			$response = Response::json($data, 201);
 		}
 
@@ -46,7 +46,7 @@ class $MODEL$sController extends \BaseController {
 	}
 
 	/**
-	 * Display the specified $RESOURCE$.
+	 * Display the specified product.
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -55,13 +55,13 @@ class $MODEL$sController extends \BaseController {
 	{
 		$response = null;
 
-		$$RESOURCE$ = $MODEL$::find($id);
-		if (empty($$RESOURCE$)) {
+		$product = Product::find($id);
+		if (empty($product)) {
 			$response = Response::json(NULL, 404);
 		} else {
 			$data = array(
-				'@odata.context' => Config::get('app.url') . '/$metadata#' . '$MODEL$s' . '/$entity',
-				'value' => $$RESOURCE$
+				'@odata.context' => Config::get('app.url') . '/$metadata#' . 'Products' . '/$entity',
+				'value' => $product
 			);
 			$response = Response::json($data, 200);
 		}
@@ -71,36 +71,36 @@ class $MODEL$sController extends \BaseController {
 	}
 
 	/**
-	 * Update the specified $RESOURCE$ in storage.
+	 * Update the specified product in storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
 	public function update($id)
 	{
-		$$RESOURCE$ = $MODEL$::findOrFail($id);
+		$product = Product::findOrFail($id);
 
-		$validator = Validator::make($data = Input::all(), $MODEL$::$rules);
+		$validator = Validator::make($data = Input::all(), Product::$rules);
 
 		if ($validator->fails())
 		{
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
 
-		$$RESOURCE$->update($data);
+		$product->update($data);
 
-		return Redirect::route('$COLLECTION$.index');
+		return Redirect::route('products.index');
 	}
 
 	/**
-	 * Remove the specified $RESOURCE$ from storage.
+	 * Remove the specified product from storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
 	public function destroy($id)
 	{
-		$MODEL$::destroy($id);
+		Product::destroy($id);
 
 		$response = Response::make(NULL, 204);
 		$response->header('OData-Version', '4.0');
