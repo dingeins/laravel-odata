@@ -1,6 +1,6 @@
 <?php
 
-class $MODEL$sController extends \BaseController {
+class $NAME$ extends \BaseController {
 
 	/**
 	 * Display a listing of $COLLECTION$
@@ -9,17 +9,19 @@ class $MODEL$sController extends \BaseController {
 	 */
 	public function index()
 	{
-		$data = $MODEL$::all();
+		$$COLLECTION$ = $MODEL$::all();
 
-		$data = array(
-		'@odata.context' => Config::get('app.url').'/$metadata#'.ucfirst('$COLLECTION$'),
-		'value' => $data
-		);
+		return View::make('$COLLECTION$.index', compact('$COLLECTION$'));
+	}
 
-		$response = Response::json($data, 200);
-		$response->header('OData-Version', '4.0');
-
-    	return $response;
+	/**
+	 * Show the form for creating a new $RESOURCE$
+	 *
+	 * @return Response
+	 */
+	public function create()
+	{
+		return View::make('$COLLECTION$.create');
 	}
 
 	/**
@@ -29,20 +31,16 @@ class $MODEL$sController extends \BaseController {
 	 */
 	public function store()
 	{
-		$response = null;
-
 		$validator = Validator::make($data = Input::all(), $MODEL$::$rules);
 
-		if ($validator->fails()) {
-			$response = Response::json(NULL, 500);
-		}
-		else{
-			$MODEL$::create($data);
-			$response = Response::json($data, 201);
+		if ($validator->fails())
+		{
+			return Redirect::back()->withErrors($validator)->withInput();
 		}
 
-		$response->header('OData-Version', '4.0');
-		return $response;
+		$MODEL$::create($data);
+
+		return Redirect::route('$COLLECTION$.index');
 	}
 
 	/**
@@ -53,21 +51,22 @@ class $MODEL$sController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$response = null;
+		$$RESOURCE$ = $MODEL$::findOrFail($id);
 
+		return View::make('$COLLECTION$.show', compact('$RESOURCE$'));
+	}
+
+	/**
+	 * Show the form for editing the specified $RESOURCE$.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function edit($id)
+	{
 		$$RESOURCE$ = $MODEL$::find($id);
-		if (empty($$RESOURCE$)) {
-			$response = Response::json(NULL, 404);
-		} else {
-			$data = array(
-				'@odata.context' => Config::get('app.url') . '/$metadata#' . '$MODEL$s' . '/$entity',
-				'value' => $$RESOURCE$
-			);
-			$response = Response::json($data, 200);
-		}
 
-		$response->header('OData-Version', '4.0');
-		return $response;
+		return View::make('$COLLECTION$.edit', compact('$RESOURCE$'));
 	}
 
 	/**
@@ -102,10 +101,7 @@ class $MODEL$sController extends \BaseController {
 	{
 		$MODEL$::destroy($id);
 
-		$response = Response::make(NULL, 204);
-		$response->header('OData-Version', '4.0');
-
-		return $response;
+		return Redirect::route('$COLLECTION$.index');
 	}
 
 }

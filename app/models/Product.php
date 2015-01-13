@@ -1,7 +1,7 @@
 <?php
 
 class Product extends \Eloquent {
-	public $timestamps = false;
+    public $timestamps = false;
 
 	// Add your validation rules here
 	public static $rules = [
@@ -9,5 +9,6 @@ class Product extends \Eloquent {
 	];
 
 	// Don't forget to fill this array
-	protected $fillable = array('ID','Name');
+	protected $fillable = ['id', 'name'];
+
 }

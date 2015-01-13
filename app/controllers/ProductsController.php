@@ -9,14 +9,14 @@ class ProductsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$data = Product::all();
+		$products = Product::all();
 
-		$data = array(
+		$products = array(
 		'@odata.context' => Config::get('app.url').'/$metadata#'.ucfirst('products'),
-		'value' => $data
+		'value' => $products
 		);
 
-		$response = Response::json($data, 200);
+		$response = Response::make($products, 200);
 		$response->header('OData-Version', '4.0');
 
     	return $response;
@@ -34,11 +34,11 @@ class ProductsController extends \BaseController {
 		$validator = Validator::make($data = Input::all(), Product::$rules);
 
 		if ($validator->fails()) {
-			$response = Response::json(NULL, 500);
+			$response = Response::make(NULL, 500);
 		}
 		else{
-			Product::create($data);
-			$response = Response::json($data, 201);
+			$data = Product::create($data);
+			$response = Response::make($data, 201);
 		}
 
 		$response->header('OData-Version', '4.0');
@@ -56,14 +56,15 @@ class ProductsController extends \BaseController {
 		$response = null;
 
 		$product = Product::find($id);
+
 		if (empty($product)) {
-			$response = Response::json(NULL, 404);
+			$response = Response::make(NULL, 404);
 		} else {
 			$data = array(
 				'@odata.context' => Config::get('app.url') . '/$metadata#' . 'Products' . '/$entity',
 				'value' => $product
 			);
-			$response = Response::json($data, 200);
+			$response = Response::make($data, 200);
 		}
 
 		$response->header('OData-Version', '4.0');
@@ -78,7 +79,19 @@ class ProductsController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$product = Product::findOrFail($id);
+		$response = null;
+
+		$product = Product::find($id);
+
+		if (empty($product)) {
+			$response = Response::make(NULL, 404);
+		} else {
+			$data = array(
+				'@odata.context' => Config::get('app.url') . '/$metadata#' . 'Products' . '/$entity',
+				'value' => $product
+			);
+			$response = Response::make($data, 200);
+		}
 
 		$validator = Validator::make($data = Input::all(), Product::$rules);
 
@@ -100,11 +113,17 @@ class ProductsController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		Product::destroy($id);
+		$response = null;
 
-		$response = Response::make(NULL, 204);
+		$product = Product::find($id);
+		if (empty($product)) {
+			$response = Response::make(NULL, 404);
+		} else {
+			Product::destroy($id);
+			$response = Response::make(NULL, 204);
+		}
+
 		$response->header('OData-Version', '4.0');
-
 		return $response;
 	}
 
