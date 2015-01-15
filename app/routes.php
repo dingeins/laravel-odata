@@ -15,7 +15,17 @@ Route::resource('Products', 'ProductsController');
 
 Route::get('/', function()
 {
-	return "service document";
+	$array = array(
+		'@odata.context'=>Config::get('app.url').'/$metadata',
+		'value' => array(
+			array(
+				'name'=>'Products',
+				'kind'=>'EntitySet',
+				'url'=>'Products'
+			)
+		)
+	);
+	return $array;
 });
 
 // Route::get('/Products', function()

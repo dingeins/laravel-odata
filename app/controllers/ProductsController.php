@@ -12,8 +12,8 @@ class ProductsController extends \BaseController {
 		$products = Product::all();
 
 		$products = array(
-		'@odata.context' => Config::get('app.url').'/$metadata#'.ucfirst('products'),
-		'value' => $products
+			'@odata.context' => Config::get('app.url').'/$metadata#'.ucfirst('products'),
+			'value' => $products
 		);
 
 		$response = Response::make($products, 200);
@@ -39,6 +39,7 @@ class ProductsController extends \BaseController {
 		else{
 			$data = Product::create($data);
 			$response = Response::make($data, 201);
+			$response->header('Location', Config::get('app.url').'/Products/'.$data->id);
 		}
 
 		$response->header('OData-Version', '4.0');
@@ -86,23 +87,19 @@ class ProductsController extends \BaseController {
 		if (empty($product)) {
 			$response = Response::make(NULL, 404);
 		} else {
-			$data = array(
-				'@odata.context' => Config::get('app.url') . '/$metadata#' . 'Products' . '/$entity',
-				'value' => $product
-			);
-			$response = Response::make($data, 200);
+			$validator = Validator::make($data = Input::all(), Product::$rules);
+
+			if ($validator->fails())
+			{
+				$response = Response::make(NULL, 500);
+			}
+
+			$product->update($data);
+			$response = Response::make(NULL, 204);
 		}
 
-		$validator = Validator::make($data = Input::all(), Product::$rules);
-
-		if ($validator->fails())
-		{
-			return Redirect::back()->withErrors($validator)->withInput();
-		}
-
-		$product->update($data);
-
-		return Redirect::route('products.index');
+		$response->header('OData-Version', '4.0');
+		return $response;
 	}
 
 	/**

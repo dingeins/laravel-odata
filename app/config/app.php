@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://localhost',
+	'url' => 'http://localhost:8080/laravel/public',
 
 	/*
 	|--------------------------------------------------------------------------
